@@ -1,0 +1,23 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Runtime state and local backups must never be published.
+state/
+runtime/
+backups/
+*.db
+*.sqlite
+*.sqlite3
+*.log
+
+# Local secrets/config dumps.
+.env
+*.env
+auth.json
+config.toml
+settings.json
+latest-status.json

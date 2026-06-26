@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Model Router"
+  short_description: "Guide CC Switch and Codex++ setup"
+  default_prompt: "Use $codex-model-router to run doctor and guide my CC Switch / Codex++ setup."

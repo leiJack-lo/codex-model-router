@@ -419,20 +419,61 @@ def doctor(_args: argparse.Namespace) -> int:
     return 0
 
 
-def install_guide(_args: argparse.Namespace) -> int:
-    print("Install Guide")
-    print("1. Install Codex first and sign in with official OpenAI/ChatGPT.")
-    print("2. Install CC Switch from GitHub Releases: https://github.com/farion1231/cc-switch/releases")
-    print("   Official repo: https://github.com/farion1231/cc-switch")
-    print("   Use it for provider presets, Claude/Codex/Gemini local routing, MCP, and skills management.")
-    print("   Add real providers/API keys in the CC Switch UI or environment; this script will not print or store secret values.")
-    print("3. Install BigPizzaV3 Codex++ from GitHub Releases: https://github.com/BigPizzaV3/CodexPlusPlus/releases")
-    print("   Official repo: https://github.com/BigPizzaV3/CodexPlusPlus")
-    print("   Use it for Codex launcher/manager, relay profiles, diagnostics, updates, and UI enhancements.")
-    print("4. Optional advanced tweak system: https://github.com/b-nnett/codex-plusplus")
-    print("   This is a different Codex++ project that patches Codex and loads tweaks. Do not mix it casually with BigPizzaV3 Codex++.")
-    print("5. After installing, ask Codex: Use $codex-model-router to run doctor and guide setup.")
-    print("6. Runtime backups are stored outside the skill at ~/.codex/runtime/codex-model-router/backups.")
+def install_guide(args: argparse.Namespace) -> int:
+    target = args.target
+    print("Codex Model Router 安装向导")
+    print("先选目标：")
+    print("- cc-switch: 用来给 Codex/Claude/Gemini 切换国产模型或第三方 provider。")
+    print("- codex-plus-plus: 用来做 Codex 模型/relay 切换、管理、诊断、更新和 UI 增强。")
+    print("- both: 两个都装，但一次只配置一个目标。")
+    print("- official: 恢复或保持官方 OpenAI/ChatGPT 登录模式。")
+    print()
+
+    if target in ("all", "both", "official"):
+        print("基础步骤")
+        print("1. 先安装官方 Codex，并完成 OpenAI/ChatGPT 登录。")
+        print("2. 安装本 Skill 到 ~/.codex/skills/codex-model-router。")
+        print("3. 重启 Codex，让本地 Skill 生效。")
+        print("4. 运行 doctor 检查当前登录、路由、CC Switch、Codex++ 状态。")
+        print()
+
+    if target in ("all", "both", "cc-switch"):
+        print("CC Switch")
+        print("- 适合：DeepSeek、国产模型、第三方模型、provider 切换、本地路由、proxy/failover、MCP。")
+        print("- Repository: https://github.com/farion1231/cc-switch")
+        print("- Releases: https://github.com/farion1231/cc-switch/releases")
+        print("- 安装后先在 CC Switch UI 里创建/选择 provider。")
+        print("- API key 建议放环境变量，例如 DEEPSEEK_API_KEY；不要写进截图、issue 或公开配置。")
+        print("- 然后让本 Skill 帮你检查 CC Switch Codex route，并把 Codex 指向本地 bridge。")
+        print()
+
+    if target in ("all", "both", "codex-plus-plus"):
+        print("Codex++")
+        print("- 适合：Codex 桌面端管理、模型/relay 切换、诊断、更新和 UI 增强。")
+        print("- 常见增强：会话删除、Markdown 导出、项目移动、时间线、滚动恢复、原生菜单放置。")
+        print("- Repository: https://github.com/BigPizzaV3/CodexPlusPlus")
+        print("- Releases: https://github.com/BigPizzaV3/CodexPlusPlus/releases")
+        print("- 安装后让本 Skill 检查 Codex++ settings，并按你的目标配置 relay 或 UI 增强。")
+        print()
+
+    if target in ("all", "both"):
+        print("两个都用时的建议")
+        print("1. 不要一次性打开所有开关。先确认官方 Codex 登录正常。")
+        print("2. 先决定模型路由是否交给 CC Switch。")
+        print("3. 再决定 Codex++ 是只做 UI 增强，还是也参与 relay/model 切换。")
+        print("4. 每改一次配置，运行 doctor 或 status 复查。")
+        print()
+
+    if target == "official":
+        print("官方模式/恢复")
+        print("- 适合：配置乱了、路由不对、想回到 OpenAI Official / ChatGPT 登录。")
+        print("- 先运行 doctor 看当前状态。")
+        print("- 需要恢复时运行 restore-official；脚本会先备份再修改。")
+        print()
+
+    print("下一步可以问 Codex：")
+    print("使用 codex-model-router，先问我想用 CC Switch 还是 Codex++，再带我下载安装和配置。")
+    print("Runtime backups are stored outside the skill at ~/.codex/runtime/codex-model-router/backups.")
     return 0
 
 
@@ -707,7 +748,13 @@ def build_parser() -> argparse.ArgumentParser:
     doctor_parser = sub.add_parser("doctor", help="Run a redacted one-shot health check and print recommended next actions")
     doctor_parser.set_defaults(func=doctor)
 
-    install_parser = sub.add_parser("install-guide", help="Print GitHub download links and setup order")
+    install_parser = sub.add_parser("install-guide", help="Print download links, feature choices, and setup order")
+    install_parser.add_argument(
+        "--target",
+        choices=["all", "cc-switch", "codex-plus-plus", "both", "official"],
+        default="all",
+        help="Which setup path to explain",
+    )
     install_parser.set_defaults(func=install_guide)
 
     status_parser = sub.add_parser("status", help="Show redacted Codex auth/routing status")

@@ -1,15 +1,35 @@
 ---
 name: codex-model-router
-description: Guided download, installation, diagnosis, configuration, and recovery for Codex with CC Switch and Codex++. Use when the user wants help installing or understanding CC Switch/Codex++, configuring Codex around those tools, routing through CC Switch safely, enabling Codex++ mainstream setup options, preserving or restoring official OpenAI/ChatGPT login, storing model keys through environment variables, or recovering from broken Codex config.
+description: Guided download, installation, feature explanation, configuration, switching, diagnosis, and recovery for Codex with CC Switch and Codex++. Use when the user wants to understand what CC Switch or Codex++ does, choose which one to install, download/install either tool, configure Codex to use domestic/third-party models through CC Switch, configure Codex++ model switching or Codex UI enhancements, switch between official OpenAI login and local routing, or recover from broken Codex config.
 ---
 
 # Codex Model Router
 
-Use this skill as a guided setup and recovery control panel for Codex + CC Switch + Codex++. The target user may not understand how to download, install, configure, or safely combine these tools, and may not want to hand-edit software settings. Lead with the user's goal, explain the safe setup path briefly, run deterministic scripts where appropriate, and verify after every change.
+Use this skill as a guided setup and recovery control panel for Codex + CC Switch + Codex++. The target user may not understand what CC Switch or Codex++ does, how to download/install them, how to configure model switching, or how to safely combine them with official Codex login. Lead by asking which tool or goal the user wants, explain the relevant tool's function briefly, then guide download, installation, configuration, switching, and verification. The desired experience is: the user talks to Codex in natural language, and Codex helps complete software configuration, modification, switching, and official-login recovery.
 
 ## Default Flow
 
-When the user asks for setup, repair, or "what should I do", run:
+When the user asks for setup, installation, repair, or "what should I do", first identify the user's target. If unclear, ask one short question:
+
+```text
+你主要想做哪件事：1）用 CC Switch 切换国产/第三方模型；2）用 Codex++ 做模型切换和 Codex 增强；3）两个都装；4）恢复官方登录/官方模式？
+```
+
+Then explain the relevant tool:
+
+- **CC Switch**: for routing Codex/Claude/Gemini through providers such as DeepSeek, domestic models, or other third-party model services. It helps switch model providers and manage local routing.
+- **Codex++**: for Codex desktop management, relay/model switching, diagnostics, updates, and UI enhancements such as session delete, markdown export, project move, timeline, scroll restore, and native menu placement.
+- **Official mode**: for keeping or restoring OpenAI/ChatGPT login and default Codex routing.
+
+For download/install guidance, run the targeted install guide:
+
+```bash
+python3 "${CODEX_HOME:-$HOME/.codex}/skills/codex-model-router/scripts/codex_model_router.py" install-guide --target all
+```
+
+Use `--target cc-switch` when the user chose CC Switch, and `--target codex-plus-plus` when the user chose Codex++.
+
+Before and after configuration changes, run:
 
 ```bash
 python3 "${CODEX_HOME:-$HOME/.codex}/skills/codex-model-router/scripts/codex_model_router.py" doctor
@@ -17,9 +37,9 @@ python3 "${CODEX_HOME:-$HOME/.codex}/skills/codex-model-router/scripts/codex_mod
 
 Then choose one path:
 
-- **Official mode**: keep Codex on OpenAI/ChatGPT login. Use `restore-official` if any third-party provider is active.
-- **CC Switch routing**: enable CC Switch's Codex route, then point Codex at the local CC Switch bridge with an environment-variable key.
-- **Codex++ setup**: guide installation and mainstream settings, optionally apply the `safe-ui` preset, then restart Codex++ and Codex.
+- **Official mode**: keep or restore Codex on OpenAI/ChatGPT login. Use `restore-official` if any third-party provider is active and the user wants official mode.
+- **CC Switch routing**: guide CC Switch installation, provider creation, environment-variable key storage, Codex route enablement, then point Codex at the local CC Switch bridge.
+- **Codex++ setup**: guide Codex++ installation, model/relay choice, mainstream enhancement settings, optionally apply the `safe-ui` preset, then restart Codex++ and Codex.
 - **Recovery**: list backups, restore a selected backup, and rerun `doctor` plus an optional `codex exec --ephemeral` smoke test.
 
 ## User Prompt Recipes
@@ -35,7 +55,19 @@ Use $codex-model-router to tell me how to install Codex, CC Switch, and Codex++ 
 ```
 
 ```text
-Use $codex-model-router to configure Codex through CC Switch for DeepSeek, using DEEPSEEK_API_KEY from my environment.
+使用 codex-model-router，先问我想用 CC Switch 还是 Codex++，再带我下载安装和配置。
+```
+
+```text
+使用 codex-model-router，介绍 CC Switch 和 Codex++ 分别能做什么，然后让我选择。
+```
+
+```text
+Use $codex-model-router to configure Codex through CC Switch for DeepSeek or another domestic model, using an environment variable for the key.
+```
+
+```text
+使用 codex-model-router，带我配置 Codex++ 的模型切换和常用 Codex 增强功能。
 ```
 
 ```text
@@ -48,6 +80,13 @@ When the user needs download/install help, run or summarize:
 
 ```bash
 python3 ~/.codex/skills/codex-model-router/scripts/codex_model_router.py install-guide
+```
+
+Targeted guides:
+
+```bash
+python3 ~/.codex/skills/codex-model-router/scripts/codex_model_router.py install-guide --target cc-switch
+python3 ~/.codex/skills/codex-model-router/scripts/codex_model_router.py install-guide --target codex-plus-plus
 ```
 
 Prefer GitHub Releases from the project repositories. Read [downloads.md](references/downloads.md) for source links and project identity notes.
@@ -78,7 +117,7 @@ Treat output showing `provider: openai` and `official-login-ok` as official logi
 
 ## CC Switch Workflows
 
-Use CC Switch for provider presets, Claude/Codex/Gemini local routing, proxy/failover, MCP, prompts, and skills management. Read [feature-map.md](references/feature-map.md) before explaining feature coverage.
+Use CC Switch when the user wants Codex/Claude/Gemini to switch domestic or third-party models, especially DeepSeek-style routing. Explain that CC Switch is mainly for provider/model routing, proxy/failover, MCP, prompts, and skills management. Read [feature-map.md](references/feature-map.md) before explaining feature coverage.
 
 Inspect redacted routing state:
 
@@ -118,7 +157,7 @@ python3 ~/.codex/skills/codex-model-router/scripts/codex_model_router.py disable
 
 ## Codex++ Workflows
 
-Use BigPizzaV3 Codex++ for launcher/manager, relay profiles, diagnostics, updates, and UI enhancements. Keep the active relay on OpenAI Official when the user only wants UI improvements.
+Use BigPizzaV3 Codex++ when the user wants Codex desktop management, model/relay switching, diagnostics, updates, or UI enhancements. Explain that it can help switch models and enable Codex improvements such as session delete, export, project move, timeline, scroll restore, and native menu placement. Keep the active relay on OpenAI Official when the user only wants UI improvements.
 
 Inspect redacted Codex++ state:
 

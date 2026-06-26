@@ -1,6 +1,6 @@
 # Feature Map
 
-Use this map to explain what the skill covers and what remains a UI/manual step.
+Use this map to explain what the skill covers and what remains a UI/manual step. Start from the user's chosen software or goal, not from internal config details.
 
 ## CC Switch
 
@@ -8,7 +8,7 @@ Mainstream features to guide:
 
 - Provider management for Claude, Codex, Gemini, and OpenClaw-style routes.
 - Local routing / live takeover for Codex, Claude, and Gemini.
-- Codex DeepSeek-style routing through a local Responses-compatible bridge.
+- Codex DeepSeek/domestic-model-style routing through a local Responses-compatible bridge.
 - Proxy/failover status inspection.
 - MCP, prompts, and skills management as CC Switch UI concepts.
 - Official Codex login preservation and rollback.
@@ -36,7 +36,7 @@ For public README wording, say "guided setup" rather than "fully automatic setup
 Mainstream features to guide:
 
 - Launcher/manager and app update flow.
-- Relay profiles for official OpenAI or third-party providers.
+- Relay/model profiles for official OpenAI or third-party providers.
 - Diagnostics and backups.
 - UI enhancements: session delete, markdown export, project move, conversation timeline, scroll restore, native menu placement.
 - Advanced UI additions: thread id badge, conversation view, Zed remote open, upstream worktree create.
